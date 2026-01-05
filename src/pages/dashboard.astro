@@ -1,0 +1,75 @@
+---
+import Layout from "../layouts/Layout.astro";
+import { db } from "../db";
+import { todos } from "../db/schema";
+import { eq } from "drizzle-orm";
+import TodoItem from "../components/TodoItem.astro";
+import { TodoHtml } from "../lib/ui";
+
+// Obtenemos el usuario del middleware (Paso 3)
+const user = Astro.locals.user;
+
+// Consultamos solo los TODOs de este usuario
+const userTodos = await db
+    .select()
+    .from(todos)
+    .where(eq(todos.userId, user!.id));
+---
+
+<Layout title="Mis Tareas">
+    <div class="flex justify-between items-center mb-6">
+        <h1 class="text-xl font-bold">Hola, {user?.name}</h1>
+        <button id="logout-btn" class="text-xs text-gray-500 underline"
+            >Cerrar Sesión</button
+        >
+    </div>
+
+    <form
+        hx-post="/api/todos/add"
+        hx-target="#todo-list"
+        hx-swap="afterbegin"
+        class="flex gap-2 mb-6"
+        on-htmx-after-request="this.reset()"
+    >
+        <input
+            type="text"
+            name="content"
+            placeholder="Nueva tarea..."
+            required
+            class="flex-1 border p-2 rounded"
+        />
+        <button
+            type="submit"
+            class="bg-black text-white px-4 py-2 rounded text-sm">Añadir</button
+        >
+    </form>
+
+    <div
+        class="bg-white border border-slate-200 rounded-xl shadow-sm overflow-hidden"
+    >
+        <div id="todo-list" class="divide-y divide-slate-100">
+            {userTodos.map((todo) => <Fragment set:html={TodoHtml(todo)} />)}
+        </div>
+
+        {
+            userTodos.length === 0 && (
+                <div
+                    id="empty-state"
+                    class="p-8 text-center text-slate-400 text-sm"
+                >
+                    No hay tareas pendientes. ¡Disfruta tu día!
+                </div>
+            )
+        }
+    </div>
+
+    <script>
+        import { authClient } from "../lib/auth-client";
+        document
+            .querySelector("#logout-btn")
+            ?.addEventListener("click", async () => {
+                await authClient.signOut();
+                window.location.href = "/login";
+            });
+    </script>
+</Layout>

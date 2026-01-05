@@ -1,0 +1,29 @@
+---
+const { todo } = Astro.props;
+---
+
+<div
+    id={`todo-${todo.id}`}
+    class="flex items-center justify-between p-3 border-b hover:bg-gray-50"
+>
+    <div class="flex items-center gap-3">
+        <input
+            type="checkbox"
+            checked={todo.completed}
+            hx-post={`/api/todos/toggle?id=${todo.id}`}
+            hx-target="closest div"
+            hx-swap="none"
+        />
+        <span class={todo.completed ? "line-through text-gray-400" : ""}
+            >{todo.content}</span
+        >
+    </div>
+    <button
+        hx-delete={`/api/todos/delete?id=${todo.id}`}
+        hx-target={`#todo-${todo.id}`}
+        hx-swap="outerHTML"
+        class="text-red-500 text-sm hover:underline"
+    >
+        Eliminar
+    </button>
+</div>

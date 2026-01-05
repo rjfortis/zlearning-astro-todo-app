@@ -1,0 +1,25 @@
+{
+  "name": "private-todo-app",
+  "type": "module",
+  "version": "0.0.1",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "@astrojs/node": "^9.5.1",
+    "@tailwindcss/vite": "^4.1.18",
+    "astro": "^5.16.6",
+    "better-auth": "^1.4.10",
+    "better-sqlite3": "^12.5.0",
+    "drizzle-orm": "^0.45.1",
+    "htmx.org": "^2.0.8",
+    "tailwindcss": "^4.1.18"
+  },
+  "devDependencies": {
+    "@types/better-sqlite3": "^7.6.13",
+    "drizzle-kit": "^0.31.8"
+  }
+}
